@@ -1,0 +1,111 @@
+"Aura_Colors"
+{
+	"name"        "Aura"    // Название в меню
+	"white"
+	{
+		"name" "White"
+		"color" "255 255 255 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"red"		// Идентефикатор в бд
+	{
+		"name" "Red"	// Название
+		"color" "255 0 0 255"	// Цвет ауры
+		"price" "2500"	// Цена ауры
+		"duration" "0"	// Длительность ауры
+	}
+	"blue"
+	{
+		"name" "Blue"
+		"color" "0 0 255 255"
+		"price" "2500"
+		"sell_price"	"750"
+		"duration" "0"
+	}
+	"sky_blue"
+	{
+		"name" "Sky Blue"
+		"color" "0 128 255 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Aquamarine"
+	{
+		"name" "Aquamarine"
+		"color" "127 255 212 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"green"
+	{
+		"name" "Green"
+		"color" "0 255 0 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Pink"
+	{
+		"name" "Pink"
+		"color" "255 0 128 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Orange"
+	{
+		"name" "Orange"
+		"color" "255 128 0 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Yellow"
+	{
+		"name" "Yellow"
+		"color" "255 255 0 255"
+		"price" "2500"
+		"sell_price"	"750"
+		"duration" "0"
+	}
+	"Cyan"
+	{
+		"name" "Cyan"
+		"color" "0 255 255 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Purple"
+	{
+		"name" "Purple"
+		"color" "255 0 255 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Violet"
+	{
+		"name" "Violet"
+		"color" "128 0 255 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Brown"
+	{
+		"name" "Brown"
+		"color" "139 69 19 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Olive"
+	{
+		"name" "Olive"
+		"color" "128 255 0 255"
+		"price" "2500"
+		"duration" "0"
+	}
+	"Lime"
+	{
+		"name" "Lime"
+		"color" "0 255 128 255"
+		"price" "2500"
+		"duration" "0"
+	}
+}
