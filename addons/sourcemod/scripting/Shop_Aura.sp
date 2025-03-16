@@ -16,23 +16,29 @@ Handle g_hTimer[MAXPLAYERS+1];
 int g_BeamSprite;
 int g_HaloSprite;
 
-Handle g_convar_enabled;
+ConVar g_convar_enabled;
+ConVar g_convar_rainbow;
+ConVar g_convar_aura_style;
+
 Handle g_hCookie;
 bool g_bShouldSee[MAXPLAYERS + 1];
+bool g_bRainbow[MAXPLAYERS + 1];
 
 public Plugin myinfo = 
 {
 	name = "[Shop] Aura",
 	description = "Grant player to buy aura",
 	author = "R1KO",
-	version = "1.3",
+	version = "1.3.1",
 	url = "http://hlmod.ru"
 };
 
 public void OnPluginStart()
 {
 	HookEvent("player_spawn", Event_OnPlayerSpawn);
-	g_convar_enabled = CreateConVar("sm_shop_aura_enabled", "1", "plugin is enabled (1) or disabled (0)");
+	g_convar_enabled = CreateConVar("sm_shop_aura_enabled", "1", "plugin is enabled (1) or disabled (0)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_convar_rainbow = CreateConVar("sm_shop_aura_rainbow", "1", "enable rainbow aura (1) or disabled (0)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
+	g_convar_aura_style = CreateConVar("sm_shop_aura_style", "0", "aura style [Wide expanding (0) - Thin aura with wave effect (1)]", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_hCookie = RegClientCookie("shop_aura", "1 - enabled, 0 - disabled", CookieAccess_Private);
 
 	if (Shop_IsStarted())
@@ -41,7 +47,7 @@ public void OnPluginStart()
 
 public void OnMapStart() 
 {
-	g_BeamSprite = PrecacheModel("materials/sprites/blueflare1.vmt");
+	g_BeamSprite = PrecacheModel("materials/sprites/laser.vmt");
 	g_HaloSprite = PrecacheModel("materials/sprites/glow08.vmt");
 
 	char buffer[PLATFORM_MAX_PATH];
@@ -116,20 +122,21 @@ public ShopAction OnEquipItem(int iClient, CategoryId category_id, const char[] 
 
 	if (KvJumpToKey(g_hKeyValues, sItem, false))
 	{
-		int iColor[4];
-		KvGetColor(g_hKeyValues, "color", iColor[0], iColor[1], iColor[2], iColor[3]);
-		KvRewind(g_hKeyValues);
+		g_bRainbow[iClient] = StrEqual(sItem, "rainbow", false);
+		
+		if (!g_bRainbow[iClient])
+		{
+			KvGetColor(g_hKeyValues, "color", g_iClientColor[iClient][0], g_iClientColor[iClient][1], 
+					g_iClientColor[iClient][2], g_iClientColor[iClient][3]);
+		}
 
-		for(int i=0; i < 4; i++) g_iClientColor[iClient][i] = iColor[i];
-		
-		g_bHasAura[iClient] = true;
+		KvRewind(g_hKeyValues);
 		SetClientAura(iClient);
-		
+		g_bHasAura[iClient] = true;
 		return Shop_UseOn;
 	}
 	
 	PrintToChat(iClient, "Failed to use \"%s\"!.", sItem);
-	
 	return Shop_Raw;
 }
 
@@ -143,6 +150,7 @@ public void OnClientCookiesCached(int iClient)
 public void OnClientDisconnect(int iClient) 
 {
 	g_bHasAura[iClient] = false;
+	g_bRainbow[iClient] = false;
 	if (g_hTimer[iClient] != INVALID_HANDLE)
 	{
 		KillTimer(g_hTimer[iClient]);
@@ -193,8 +201,24 @@ public Action Timer_Beacon(Handle hTimer, any iClient)
 		int i;
 		int[] iClientsArray = new int[MaxClients];
 		GetClientAbsOrigin(iClient, fVec);
-		fVec[2] += 10.0;
-		TE_SetupBeamRingPoint(fVec, 50.0, 60.0, g_BeamSprite, g_HaloSprite, 0, 15, 0.1, 10.0, 0.0, g_iClientColor[iClient], 10, 0);
+
+		int aura_style = g_convar_aura_style.IntValue;
+
+		fVec[2] += (aura_style == 0) ? 10.0 : 7.5;
+
+		if (g_convar_rainbow.BoolValue && g_bRainbow[iClient])
+		{
+			g_iClientColor[iClient][0] = GetRandomInt(1, 255);
+			g_iClientColor[iClient][1] = GetRandomInt(1, 255);
+			g_iClientColor[iClient][2] = GetRandomInt(1, 255);
+			g_iClientColor[iClient][3] = 255;
+		}
+
+		if (aura_style == 0)
+			TE_SetupBeamRingPoint(fVec, 50.0, 60.0, g_BeamSprite, g_HaloSprite, 0, 15, 0.1, 10.0, 0.0, g_iClientColor[iClient], 10, 0);
+		else
+			TE_SetupBeamRingPoint(fVec, 50.0, 51.0, g_BeamSprite, g_HaloSprite, 0, 15, 0.1, 10.0, 1.0, g_iClientColor[iClient], 10, 0);
+		
 		i = 1;
 		iClients = 0;
 
@@ -208,7 +232,8 @@ public Action Timer_Beacon(Handle hTimer, any iClient)
 		}
 		TE_Send(iClientsArray, iClients);
 		return Plugin_Continue;
-	} else
+	}
+	else
 	{
 		KillTimer(g_hTimer[iClient]);
 		g_hTimer[iClient] = INVALID_HANDLE;
