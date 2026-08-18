@@ -21,52 +21,42 @@ addons/sourcemod/
 │   └── ci.yml               # GitHub Actions CI/CD pipeline
 └── copilot-instructions.md  # This file
 
-sourceknight.yaml            # Build system configuration
 .gitignore                   # Git ignore patterns
 ```
 
 ## Language & Platform Specifics
 
 - **Language**: SourcePawn (Source engine scripting language)
-- **Platform**: SourceMod 1.11.0+ (game server modification framework)
-- **Compiler**: SourcePawn Compiler (spcomp) via sourceknight build system
+- **Platform**: SourceMod 1.12.x (game server modification framework)
+- **Compiler**: SourcePawn Compiler (spcomp) via native GitHub Actions
 - **Target Games**: Source engine games (CS:GO, CS2, TF2, etc.)
 
 ## Dependencies
 
-This plugin requires several dependencies that are automatically managed by sourceknight:
+This plugin requires several dependencies that are automatically fetched by the CI workflow:
 
-1. **SourceMod 1.11.0+** - Core scripting platform
+1. **SourceMod 1.12.x** - Core scripting platform (via `rumblefrog/setup-sp`)
 2. **Shop-Core** - Base shop system (https://github.com/srcdslab/sm-plugin-Shop-Core)
 3. **MultiColors** - Chat color formatting (https://github.com/srcdslab/sm-plugin-MultiColors)
 
-Dependencies are defined in `sourceknight.yaml` and automatically downloaded during build.
+Dependencies are cloned directly and their include files copied into
+`addons/sourcemod/scripting/include` during the CI build (see `.github/workflows/ci.yml`).
 
 ## Build System
 
-### Primary Build Tool: sourceknight
-- Modern SourceMod build system
-- Configuration in `sourceknight.yaml`
-- Handles dependency management automatically
-- Supports both local and CI builds
-
-### Build Commands
-```bash
-# Install sourceknight (if not available)
-pip install sourceknight
-
-# Build the plugin
-sourceknight build
-
-# Clean build artifacts
-sourceknight clean
-```
-
-### CI/CD Pipeline
-- GitHub Actions workflow in `.github/workflows/ci.yml`
+### GitHub Actions CI
+- Configuration in `.github/workflows/ci.yml`
+- Uses `rumblefrog/setup-sp` to install the SourcePawn compiler (SourceMod 1.12.x)
+- Clones git dependencies and compiles with `spcomp` directly
 - Automatically builds on push/PR to main/master
-- Creates releases and packages
-- Uses `maxime1907/action-sourceknight@v1` action
+- Creates releases and packages, tagging `latest` on master/main pushes
+
+### Local Build
+1. Install a SourcePawn compiler matching SourceMod 1.12.x (`spcomp`)
+2. Fetch the include files for MultiColors and Shop-Core into
+   `addons/sourcemod/scripting/include`
+3. Run `spcomp -i include -o ../plugins/Shop_Aura.smx Shop_Aura.sp` from
+   `addons/sourcemod/scripting`
 
 ## Code Style & Standards
 
