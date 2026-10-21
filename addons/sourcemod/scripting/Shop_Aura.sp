@@ -11,7 +11,7 @@
 int g_iClientColor[MAXPLAYERS+1][4];
 bool g_bHasAura[MAXPLAYERS+1];
 
-Handle g_hKeyValues;
+KeyValues g_hKeyValues;
 Handle g_hTimer[MAXPLAYERS+1];
 int g_BeamSprite;
 int g_HaloSprite;
@@ -20,7 +20,7 @@ ConVar g_convar_enabled;
 ConVar g_convar_rainbow;
 ConVar g_convar_aura_style;
 
-Handle g_hCookie;
+Cookie g_hCookie;
 bool g_bShouldSee[MAXPLAYERS + 1];
 bool g_bRainbow[MAXPLAYERS + 1];
 
@@ -29,7 +29,7 @@ public Plugin myinfo =
 	name = "[Shop] Aura",
 	description = "Grant player to buy aura",
 	author = "R1KO",
-	version = "1.3.2",
+	version = "1.3.3",
 	url = "http://hlmod.ru"
 };
 
@@ -39,7 +39,7 @@ public void OnPluginStart()
 	g_convar_enabled = CreateConVar("sm_shop_aura_enabled", "1", "plugin is enabled (1) or disabled (0)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_convar_rainbow = CreateConVar("sm_shop_aura_rainbow", "1", "enable rainbow aura (1) or disabled (0)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_convar_aura_style = CreateConVar("sm_shop_aura_style", "0", "aura style [Wide expanding (0) - Thin aura with wave effect (1)]", FCVAR_NOTIFY, true, 0.0, true, 1.0);
-	g_hCookie = RegClientCookie("shop_aura", "1 - enabled, 0 - disabled", CookieAccess_Private);
+	g_hCookie = new Cookie("shop_aura", "1 - enabled, 0 - disabled", CookieAccess_Private);
 
 	if (Shop_IsStarted())
 		Shop_Started();
@@ -51,13 +51,13 @@ public void OnMapStart()
 	g_HaloSprite = PrecacheModel("materials/sprites/glow08.vmt");
 
 	char buffer[PLATFORM_MAX_PATH];
-	if (g_hKeyValues != INVALID_HANDLE) CloseHandle(g_hKeyValues);
+	if (g_hKeyValues != null) delete g_hKeyValues;
 	
-	g_hKeyValues = CreateKeyValues("Aura_Colors");
+	g_hKeyValues = new KeyValues("Aura_Colors");
 	
 	Shop_GetCfgFile(buffer, sizeof(buffer), "aura_colors.txt");
 	
-	if (!FileToKeyValues(g_hKeyValues, buffer)) SetFailState("Couldn't parse file %s", buffer);
+	if (!g_hKeyValues.ImportFromFile(buffer)) SetFailState("Couldn't parse file %s", buffer);
 }
 
 public void OnPluginEnd()
@@ -67,33 +67,33 @@ public void OnPluginEnd()
 
 public void Shop_Started()
 {
-	if (g_hKeyValues == INVALID_HANDLE) OnMapStart();
+	if (g_hKeyValues == null) OnMapStart();
 
-	KvRewind(g_hKeyValues);
+	g_hKeyValues.Rewind();
 	char sName[64], sDescription[64];
 	
-	KvGetString(g_hKeyValues, "name", sName, sizeof(sName), "Aura");
-	KvGetString(g_hKeyValues, "description", sDescription, sizeof(sDescription));
+	g_hKeyValues.GetString("name", sName, sizeof(sName), "Aura");
+	g_hKeyValues.GetString("description", sDescription, sizeof(sDescription));
 
 	CategoryId category_id = Shop_RegisterCategory("aura", sName, sDescription);
 
-	KvRewind(g_hKeyValues);
+	g_hKeyValues.Rewind();
 
-	if (KvGotoFirstSubKey(g_hKeyValues))
+	if (g_hKeyValues.GotoFirstSubKey())
 	{
 		do
 		{
-			if (KvGetSectionName(g_hKeyValues, sName, sizeof(sName)) && Shop_StartItem(category_id, sName))
+			if (g_hKeyValues.GetSectionName(sName, sizeof(sName)) && Shop_StartItem(category_id, sName))
 			{
-				KvGetString(g_hKeyValues, "name", sDescription, sizeof(sDescription), sName);
-				Shop_SetInfo(sDescription, "", KvGetNum(g_hKeyValues, "price", -1), KvGetNum(g_hKeyValues, "sellprice", -1), Item_Togglable, KvGetNum(g_hKeyValues, "duration", 604800));
+				g_hKeyValues.GetString("name", sDescription, sizeof(sDescription), sName);
+				Shop_SetInfo(sDescription, "", g_hKeyValues.GetNum("price", -1), g_hKeyValues.GetNum("sellprice", -1), Item_Togglable, g_hKeyValues.GetNum("duration", 604800));
 				Shop_SetCallbacks(_, OnEquipItem);
 				Shop_EndItem();
 			}
-		} while (KvGotoNextKey(g_hKeyValues));
+		} while (g_hKeyValues.GotoNextKey());
 	}
 	
-	KvRewind(g_hKeyValues);
+	g_hKeyValues.Rewind();
 	
 	Shop_AddToFunctionsMenu(FuncToggleVisibilityDisplay, FuncToggleVisibility);
 }
@@ -120,17 +120,16 @@ public ShopAction OnEquipItem(int iClient, CategoryId category_id, const char[] 
 	
 	Shop_ToggleClientCategoryOff(iClient, category_id);
 
-	if (KvJumpToKey(g_hKeyValues, sItem, false))
+	if (g_hKeyValues.JumpToKey(sItem, false))
 	{
 		g_bRainbow[iClient] = StrEqual(sItem, "rainbow", false);
 		
 		if (!g_bRainbow[iClient])
 		{
-			KvGetColor(g_hKeyValues, "color", g_iClientColor[iClient][0], g_iClientColor[iClient][1], 
-					g_iClientColor[iClient][2], g_iClientColor[iClient][3]);
+			g_hKeyValues.GetColor("color", g_iClientColor[iClient][0], g_iClientColor[iClient][1], g_iClientColor[iClient][2], g_iClientColor[iClient][3]);
 		}
 
-		KvRewind(g_hKeyValues);
+		g_hKeyValues.Rewind();
 		SetClientAura(iClient);
 		g_bHasAura[iClient] = true;
 		return Shop_UseOn;
@@ -143,7 +142,7 @@ public ShopAction OnEquipItem(int iClient, CategoryId category_id, const char[] 
 public void OnClientCookiesCached(int iClient)
 {
 	char sBuffer[4];
-	GetClientCookie(iClient, g_hCookie, sBuffer, 4);
+	g_hCookie.Get(iClient, sBuffer, 4);
 	g_bShouldSee[iClient] = view_as<bool>(StringToInt(sBuffer));
 }
 
@@ -151,17 +150,16 @@ public void OnClientDisconnect(int iClient)
 {
 	g_bHasAura[iClient] = false;
 	g_bRainbow[iClient] = false;
-	if (g_hTimer[iClient] != INVALID_HANDLE)
+	if (g_hTimer[iClient] != null)
 	{
-		KillTimer(g_hTimer[iClient]);
-		g_hTimer[iClient] = INVALID_HANDLE;
+		delete g_hTimer[iClient];
 	}
 	
 	SetCookieBool(iClient, g_hCookie, g_bShouldSee[iClient]);
 	g_bShouldSee[iClient] = true;
 }
 
-stock void SetCookieBool(int iClient, Handle hCookie, bool bValue)
+stock void SetCookieBool(int iClient, Cookie hCookie, bool bValue)
 {
 	char sBuffer[4];
 	if ( bValue ) {
@@ -170,7 +168,7 @@ stock void SetCookieBool(int iClient, Handle hCookie, bool bValue)
 	else {
 		strcopy(sBuffer, 4, "0");
 	}
-	SetClientCookie(iClient, hCookie, sBuffer);
+	hCookie.Set(iClient, sBuffer);
 }
 
 public void OnClientPostAdminCheck(int iClient)
@@ -178,17 +176,17 @@ public void OnClientPostAdminCheck(int iClient)
 	g_bHasAura[iClient] = false;
 }
 
-public void Event_OnPlayerSpawn(Handle hEvent, const char[] sName, bool bSilent)
+public void Event_OnPlayerSpawn(Event hEvent, const char[] sName, bool bSilent)
 {
-	int iClient = GetClientOfUserId(GetEventInt(hEvent, "userid"));
+	int iClient = GetClientOfUserId(hEvent.GetInt("userid"));
 	if (iClient > 0 && g_bHasAura[iClient] && IsPlayerAlive(iClient))
 		SetClientAura(iClient);
 }
 
 stock void SetClientAura(int iClient)
 {
-	if ( GetConVarBool(g_convar_enabled) ) {
-		if (g_hTimer[iClient] == INVALID_HANDLE) g_hTimer[iClient] = CreateTimer(0.1, Timer_Beacon, iClient, TIMER_REPEAT);
+	if ( g_convar_enabled.BoolValue ) {
+		if (g_hTimer[iClient] == null) g_hTimer[iClient] = CreateTimer(0.1, Timer_Beacon, iClient, TIMER_REPEAT);
 	}
 }
 
@@ -235,8 +233,7 @@ public Action Timer_Beacon(Handle hTimer, any iClient)
 	}
 	else
 	{
-		KillTimer(g_hTimer[iClient]);
-		g_hTimer[iClient] = INVALID_HANDLE;
+		delete g_hTimer[iClient];
 	}
 	return Plugin_Stop;
 }
