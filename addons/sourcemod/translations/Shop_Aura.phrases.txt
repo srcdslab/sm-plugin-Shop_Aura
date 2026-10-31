@@ -1,0 +1,54 @@
+"Phrases"
+{
+	"Aura Visibility Visible"
+	{
+		"en"		"Aura: Visible"
+		"fr"		"Aura : visible"
+		"ru"		"Аура: видима"
+		"es"		"Aura: visible"
+		"de"		"Aura: sichtbar"
+		"pt"		"Aura: visível"
+		"chi"		"光环：可见"
+	}
+	"Aura Visibility Hidden"
+	{
+		"en"		"Aura: Hidden"
+		"fr"		"Aura : cachée"
+		"ru"		"Аура: скрыта"
+		"es"		"Aura: oculta"
+		"de"		"Aura: versteckt"
+		"pt"		"Aura: oculta"
+		"chi"		"光环：隐藏"
+	}
+	"Aura Now Visible"
+	{
+		"en"		"Shop aura is {blue}visible{default}."
+		"fr"		"L'aura du shop est {blue}visible{default}."
+		"ru"		"Аура из магазина {blue}видима{default}."
+		"es"		"El aura de la tienda está {blue}visible{default}."
+		"de"		"Shop-Aura ist {blue}sichtbar{default}."
+		"pt"		"A aura da loja está {blue}visível{default}."
+		"chi"		"商店光环已设为{blue}可见{default}。"
+	}
+	"Aura Now Hidden"
+	{
+		"en"		"Shop aura is {red}hidden{default}."
+		"fr"		"L'aura du shop est {red}cachée{default}."
+		"ru"		"Аура из магазина {red}скрыта{default}."
+		"es"		"El aura de la tienda está {red}oculta{default}."
+		"de"		"Shop-Aura ist {red}versteckt{default}."
+		"pt"		"A aura da loja está {red}oculta{default}."
+		"chi"		"商店光环已设为{red}隐藏{default}。"
+	}
+	"Failed To Use Item"
+	{
+		"#format"	"{1:s}"
+		"en"		"Failed to use \"{1}\"!"
+		"fr"		"Impossible d'utiliser \"{1}\" !"
+		"ru"		"Не удалось использовать \"{1}\"!"
+		"es"		"¡No se pudo usar \"{1}\"!"
+		"de"		"\"{1}\" konnte nicht verwendet werden!"
+		"pt"		"Não foi possível usar \"{1}\"!"
+		"chi"		"无法使用“{1}”！"
+	}
+}
