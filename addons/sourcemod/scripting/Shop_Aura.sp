@@ -29,12 +29,14 @@ public Plugin myinfo =
 	name = "[Shop] Aura",
 	description = "Grant player to buy aura",
 	author = "R1KO",
-	version = "1.3.3",
+	version = "1.3.4",
 	url = "http://hlmod.ru"
 };
 
 public void OnPluginStart()
 {
+	LoadTranslations("Shop_Aura.phrases");
+
 	HookEvent("player_spawn", Event_OnPlayerSpawn);
 	g_convar_enabled = CreateConVar("sm_shop_aura_enabled", "1", "plugin is enabled (1) or disabled (0)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_convar_rainbow = CreateConVar("sm_shop_aura_rainbow", "1", "enable rainbow aura (1) or disabled (0)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
@@ -100,13 +102,13 @@ public void Shop_Started()
 
 public void FuncToggleVisibilityDisplay(int client, char[] buffer, int maxlength)
 {
-	Format(buffer, maxlength, "Aura: %s", g_bShouldSee[client] ? "Visible" : "Hidden");
+	Format(buffer, maxlength, "%T", g_bShouldSee[client] ? "Aura Visibility Visible" : "Aura Visibility Hidden", client);
 }
 
 public bool FuncToggleVisibility(int client)
 {
 	g_bShouldSee[client] = !g_bShouldSee[client];
-	CPrintToChat(client, "{green}[Shop] {default}Shop aura is %s{default}.", g_bShouldSee[client] ? "{blue}visible":"{red}hidden");
+	CPrintToChat(client, "{green}[Shop] {default}%t", g_bShouldSee[client] ? "Aura Now Visible" : "Aura Now Hidden");
 	return false;
 }
 
@@ -135,7 +137,7 @@ public ShopAction OnEquipItem(int iClient, CategoryId category_id, const char[] 
 		return Shop_UseOn;
 	}
 	
-	PrintToChat(iClient, "Failed to use \"%s\"!.", sItem);
+	PrintToChat(iClient, "%t", "Failed To Use Item", sItem);
 	return Shop_Raw;
 }
 
