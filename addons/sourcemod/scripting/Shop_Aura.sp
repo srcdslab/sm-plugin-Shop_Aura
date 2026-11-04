@@ -29,7 +29,7 @@ public Plugin myinfo =
 	name = "[Shop] Aura",
 	description = "Grant player to buy aura",
 	author = "R1KO",
-	version = "1.3.4",
+	version = "1.3.5",
 	url = "http://hlmod.ru"
 };
 
@@ -235,7 +235,8 @@ public Action Timer_Beacon(Handle hTimer, any iClient)
 	}
 	else
 	{
-		delete g_hTimer[iClient];
+		// Plugin_Stop below ends the timer: deleting it here would free its handle twice.
+		g_hTimer[iClient] = null;
 	}
 	return Plugin_Stop;
 }
