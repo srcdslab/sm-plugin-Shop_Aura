@@ -29,7 +29,7 @@ public Plugin myinfo =
 	name = "[Shop] Aura",
 	description = "Grant player to buy aura",
 	author = "R1KO",
-	version = "1.3.5",
+	version = "1.3.6",
 	url = "http://hlmod.ru"
 };
 
