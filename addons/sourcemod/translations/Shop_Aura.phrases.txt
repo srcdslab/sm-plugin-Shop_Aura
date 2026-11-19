@@ -9,6 +9,12 @@
 		"de"		"Aura: sichtbar"
 		"pt"		"Aura: visível"
 		"chi"		"光环：可见"
+		"pl"		"Aura: widoczna"
+		"tr"		"Aura: Görünür"
+		"it"		"Aura: visibile"
+		"ua"		"Аура: видима"
+		"zho"		"光環：可見"
+		"cze"		"Aura: viditelná"
 	}
 	"Aura Visibility Hidden"
 	{
@@ -19,6 +25,12 @@
 		"de"		"Aura: versteckt"
 		"pt"		"Aura: oculta"
 		"chi"		"光环：隐藏"
+		"pl"		"Aura: ukryta"
+		"tr"		"Aura: Gizli"
+		"it"		"Aura: nascosta"
+		"ua"		"Аура: прихована"
+		"zho"		"光環：隱藏"
+		"cze"		"Aura: skrytá"
 	}
 	"Aura Now Visible"
 	{
@@ -29,6 +41,12 @@
 		"de"		"Shop-Aura ist {blue}sichtbar{default}."
 		"pt"		"A aura da loja está {blue}visível{default}."
 		"chi"		"商店光环已设为{blue}可见{default}。"
+		"pl"		"Aura sklepu jest {blue}widoczna{default}."
+		"tr"		"Mağaza aurası {blue}görünür{default}."
+		"it"		"L'aura dello shop è {blue}visibile{default}."
+		"ua"		"Аура з магазину {blue}видима{default}."
+		"zho"		"商店光環已設為{blue}可見{default}。"
+		"cze"		"Aura z obchodu je {blue}viditelná{default}."
 	}
 	"Aura Now Hidden"
 	{
@@ -39,6 +57,12 @@
 		"de"		"Shop-Aura ist {red}versteckt{default}."
 		"pt"		"A aura da loja está {red}oculta{default}."
 		"chi"		"商店光环已设为{red}隐藏{default}。"
+		"pl"		"Aura sklepu jest {red}ukryta{default}."
+		"tr"		"Mağaza aurası {red}gizli{default}."
+		"it"		"L'aura dello shop è {red}nascosta{default}."
+		"ua"		"Аура з магазину {red}прихована{default}."
+		"zho"		"商店光環已設為{red}隱藏{default}。"
+		"cze"		"Aura z obchodu je {red}skrytá{default}."
 	}
 	"Failed To Use Item"
 	{
@@ -50,5 +74,11 @@
 		"de"		"\"{1}\" konnte nicht verwendet werden!"
 		"pt"		"Não foi possível usar \"{1}\"!"
 		"chi"		"无法使用“{1}”！"
+		"pl"		"Nie udało się użyć \"{1}\"!"
+		"tr"		"\"{1}\" kullanılamadı!"
+		"it"		"Impossibile usare \"{1}\"!"
+		"ua"		"Не вдалося використати \"{1}\"!"
+		"zho"		"無法使用「{1}」！"
+		"cze"		"Nepodařilo se použít \"{1}\"!"
 	}
 }
